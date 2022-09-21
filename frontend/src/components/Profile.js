@@ -8,7 +8,7 @@ const Profile = () => {
 
   const getScores = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/scores/${id}`);
+      const response = await fetch(`http://localhost:5000/api/scores/${id}`);
       const jsonData = await response.json();
 
       setScores(jsonData);

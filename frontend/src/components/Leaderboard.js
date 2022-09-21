@@ -5,7 +5,7 @@ const Leaderboard = () => {
 
   const getScores = async () => {
     try {
-      const response = await fetch("http://localhost:5000/scores");
+      const response = await fetch("http://localhost:5000/api/scores");
       const jsonData = await response.json();
 
       setScores(jsonData);
