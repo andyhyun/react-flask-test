@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const Leaderboard = () => {
+const Game = () => {
   const [data, setData] = useState({
     wpm: 0,
     userId: 1
@@ -59,4 +59,4 @@ const Leaderboard = () => {
   );
 }
 
-export default Leaderboard;
+export default Game;
