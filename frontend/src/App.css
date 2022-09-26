@@ -36,3 +36,43 @@
     transform: rotate(360deg);
   }
 }
+
+/* Everything below is mine */
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 600px;
+  font-family: 'Roboto Mono', monospace;
+  font-size: large;
+}
+
+.prompt {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 8px;
+}
+
+.controls {
+  display: flex;
+  gap: 4px;
+}
+
+.controls input {
+  flex: 4;
+  font-family: 'Roboto Mono', monospace;
+  font-size: large;
+}
+
+.controls button {
+  flex: 1;
+  font-family: 'Roboto Mono', monospace;
+  font-size: large;
+}

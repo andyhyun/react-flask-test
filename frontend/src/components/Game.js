@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
+import { createRandomPrompt, wordStartIsSame, combineStringAndKey } from '../util/gameUtil'
 
-const Game = () => {
-  const [data, setData] = useState({
-    wpm: 0,
-    userId: 1
-  });
+const Game = (props) => {
+  const [gameLength, setGameLength] = useState(10);
+  const [gameKey, setGameKey] = useState(true);
+  const [wpm, setWpm] = useState(0);
+  // const [promptWords, setPromptWords] = useState([]);
+  // const [promptDivs, setPromptDivs] = useState([]);
+  const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    console.log(JSON.stringify(data));
+  const promptEl = useRef(null);
+
+  const handleSubmit = async (data) => {
     try {
       await fetch("http://localhost:5000/api/scores", {
         method: 'POST',
@@ -22,40 +25,67 @@ const Game = () => {
     }
   }
 
-  const updateWpm = (value) => {
-    let tempData = structuredClone(data);
-    tempData.wpm = parseInt(value);
-    setData(tempData);
-  }
+  // const getPrompt = () => {
+  //   const prompt = createRandomPrompt(props.length);
+  //   setPromptWords(prompt[0]);
+  //   setPromptDivs(prompt[1]);
+  // }
 
-  const updateUserId = (value) => {
-    let tempData = structuredClone(data);
-    tempData.userId = parseInt(value);
-    setData(tempData);
+  // useEffect(() => {
+  //   getPrompt();
+  // }, [])
+
+  const [promptWords, promptDivs] = useMemo(() => {
+    return createRandomPrompt(props.length)
+  }, [props.length, gameKey]);
+  
+  const handleKeyDown = (e) => {
+    if (currentWordIndex >= props.length) return;
+
+    if (wordStartIsSame(combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey), promptWords[currentWordIndex])) {
+      e.target.style.backgroundColor = 'white';
+    } else {
+      e.target.style.backgroundColor = 'red';
+    }
+
+    if (e.key === ' ' && e.target.value === '') {
+      // Pressing space with nothing in text input
+      e.preventDefault();
+    } else if (e.key === ' ' && e.target.value === promptWords[currentWordIndex]) {
+      // Pressing space when word is typed correctly
+      e.preventDefault();
+      e.target.value = '';
+      promptEl.current.children[currentWordIndex].style.color = 'lightgreen';
+      setCurrentWordIndex(currentWordIndex + 1);
+    } else if (
+      currentWordIndex === props.length - 1
+      && promptWords[currentWordIndex] === combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey)
+    ) {
+      // Handle the game ending here
+      e.preventDefault();
+      e.target.value = '';
+      promptEl.current.children[currentWordIndex].style.color = 'lightgreen';
+      setCurrentWordIndex(currentWordIndex + 1);
+      handleSubmit({
+        wpm: Math.floor(Math.random() * 30 + 85),
+        userId: Math.floor(Math.random() * 5 + 1)
+      });
+    }
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <label htmlFor="wpm">WPM</label>
+    <div className='container' key={gameKey}>
+      <div className='stats'>{wpm} WPM</div>
+      <div ref={promptEl} className='prompt'>{promptDivs}</div>
+      <div className='controls'>
         <input
-          id="wpm"
-          type="number"
-          onChange={(e) => updateWpm(e.target.value)}
-          required
+          type='text'
+          onKeyDown={handleKeyDown}
+          autoFocus
         />
+        <button type='button' onClick={() => setGameKey(!gameKey)}>redo</button>
       </div>
-      <div>
-        <label htmlFor="user-id">User ID</label>
-        <input
-          id="user-id"
-          type="number"
-          onChange={(e) => updateUserId(e.target.value)}
-          required
-        />
-      </div>
-      <button type="submit">Add to database</button>
-    </form>
+    </div>
   );
 }
 
