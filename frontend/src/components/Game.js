@@ -76,15 +76,11 @@ const Game = () => {
   }
 
   const handleChange = (e) => {
-    setGameKey(!gameKey);
-    setCurrentWordIndex(0);
-    setStartTime(0);
-    setWpm(0);
-    setPhase(0);
+    handleRedo();
     setGameLength(parseInt(e.target.value));
   }
 
-  const handleRedo = (e) => {
+  const handleRedo = () => {
     setGameKey(!gameKey);
     setCurrentWordIndex(0);
     setStartTime(0);
