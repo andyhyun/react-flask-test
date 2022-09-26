@@ -47,9 +47,11 @@ body {
 
 .container {
   display: flex;
+  justify-content: center;
   flex-direction: column;
   gap: 4px;
-  max-width: 600px;
+  width: 600px;
+  height: 100vh;
   font-family: 'Roboto Mono', monospace;
   font-size: large;
 }

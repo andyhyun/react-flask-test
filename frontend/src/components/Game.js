@@ -4,9 +4,9 @@ import { createRandomPrompt, wordStartIsSame, combineStringAndKey } from '../uti
 const Game = () => {
   const [gameLength, setGameLength] = useState(10);
   const [gameKey, setGameKey] = useState(true);
+  const [startTime, setStartTime] = useState(0);
   const [wpm, setWpm] = useState(0);
-  // const [promptWords, setPromptWords] = useState([]);
-  // const [promptDivs, setPromptDivs] = useState([]);
+  const [phase, setPhase] = useState(0);
   const [currentWordIndex, setCurrentWordIndex] = useState(0);
 
   const promptEl = useRef(null);
@@ -25,21 +25,23 @@ const Game = () => {
     }
   }
 
-  // const getPrompt = () => {
-  //   const prompt = createRandomPrompt(gameLength);
-  //   setPromptWords(prompt[0]);
-  //   setPromptDivs(prompt[1]);
-  // }
-
-  // useEffect(() => {
-  //   getPrompt();
-  // }, [gameKey])
-
   const [promptWords, promptDivs] = useMemo(() => {
     return createRandomPrompt(gameLength)
   }, [gameLength, gameKey]);
+
+  useEffect(() => {
+    if (phase === 1) {
+      setStartTime(performance.now());
+    } else if (phase === 2) {
+      handleSubmit({
+        wpm: wpm,
+        userId: Math.floor(Math.random() * 5 + 1)
+      });
+    }
+  }, [phase]);
   
   const handleKeyDown = (e) => {
+    if (phase === 0 && combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey).length !== 0) setPhase(1);
     if (currentWordIndex >= gameLength) return;
 
     if (e.key === ' ' && e.target.value.length < promptWords[currentWordIndex].length) {
@@ -68,22 +70,26 @@ const Game = () => {
       e.target.value = '';
       promptEl.current.children[currentWordIndex].style.color = 'lightgreen';
       setCurrentWordIndex(currentWordIndex + 1);
-      handleSubmit({
-        wpm: Math.floor(Math.random() * 30 + 85),
-        userId: Math.floor(Math.random() * 5 + 1)
-      });
+      setWpm(Math.round((promptWords.join(' ').length / 5) / ((performance.now() - startTime) / 60000)));
+      setPhase(2);
     }
   }
 
   const handleChange = (e) => {
     setGameKey(!gameKey);
     setCurrentWordIndex(0);
+    setStartTime(0);
+    setWpm(0);
+    setPhase(0);
     setGameLength(parseInt(e.target.value));
   }
 
   const handleRedo = (e) => {
     setGameKey(!gameKey);
     setCurrentWordIndex(0);
+    setStartTime(0);
+    setWpm(0);
+    setPhase(0);
   }
 
   return (
