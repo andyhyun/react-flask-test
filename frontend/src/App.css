@@ -54,6 +54,11 @@ body {
   font-size: large;
 }
 
+.radio-buttons {
+  display: flex;
+  gap: 4px;
+}
+
 .prompt {
   display: flex;
   flex-wrap: wrap;

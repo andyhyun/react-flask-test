@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { createRandomPrompt, wordStartIsSame, combineStringAndKey } from '../util/gameUtil'
 
-const Game = (props) => {
+const Game = () => {
   const [gameLength, setGameLength] = useState(10);
   const [gameKey, setGameKey] = useState(true);
   const [wpm, setWpm] = useState(0);
@@ -26,21 +26,21 @@ const Game = (props) => {
   }
 
   // const getPrompt = () => {
-  //   const prompt = createRandomPrompt(props.length);
+  //   const prompt = createRandomPrompt(gameLength);
   //   setPromptWords(prompt[0]);
   //   setPromptDivs(prompt[1]);
   // }
 
   // useEffect(() => {
   //   getPrompt();
-  // }, [])
+  // }, [gameKey])
 
   const [promptWords, promptDivs] = useMemo(() => {
-    return createRandomPrompt(props.length)
-  }, [props.length, gameKey]);
+    return createRandomPrompt(gameLength)
+  }, [gameLength, gameKey]);
   
   const handleKeyDown = (e) => {
-    if (currentWordIndex >= props.length) return;
+    if (currentWordIndex >= gameLength) return;
 
     if (wordStartIsSame(combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey), promptWords[currentWordIndex])) {
       e.target.style.backgroundColor = 'white';
@@ -58,7 +58,7 @@ const Game = (props) => {
       promptEl.current.children[currentWordIndex].style.color = 'lightgreen';
       setCurrentWordIndex(currentWordIndex + 1);
     } else if (
-      currentWordIndex === props.length - 1
+      currentWordIndex === gameLength - 1
       && promptWords[currentWordIndex] === combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey)
     ) {
       // Handle the game ending here
@@ -73,8 +73,37 @@ const Game = (props) => {
     }
   }
 
+  const handleChange = (e) => {
+    setGameKey(!gameKey);
+    setCurrentWordIndex(0);
+    setGameLength(parseInt(e.target.value));
+  }
+
+  const handleRedo = (e) => {
+    setGameKey(!gameKey);
+    setCurrentWordIndex(0);
+  }
+
   return (
     <div className='container' key={gameKey}>
+      <div className='radio-buttons'>
+        <div>
+          <input type='radio' name='length' id='10' value='10' onChange={handleChange} />
+          <label htmlFor='10'>10</label>
+        </div>
+        <div>
+          <input type='radio' name='length' id='25' value='25' onChange={handleChange} />
+          <label htmlFor='25'>25</label>
+        </div>
+        <div>
+          <input type='radio' name='length' id='50' value='50' onChange={handleChange} />
+          <label htmlFor='50'>50</label>
+        </div>
+        <div>
+          <input type='radio' name='length' id='100' value='100' onChange={handleChange} />
+          <label htmlFor='100'>100</label>
+        </div>
+      </div>
       <div className='stats'>{wpm} WPM</div>
       <div ref={promptEl} className='prompt'>{promptDivs}</div>
       <div className='controls'>
@@ -83,7 +112,7 @@ const Game = (props) => {
           onKeyDown={handleKeyDown}
           autoFocus
         />
-        <button type='button' onClick={() => setGameKey(!gameKey)}>redo</button>
+        <button type='button' onClick={handleRedo}>redo</button>
       </div>
     </div>
   );
