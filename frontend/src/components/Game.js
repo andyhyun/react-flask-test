@@ -42,7 +42,9 @@ const Game = () => {
   const handleKeyDown = (e) => {
     if (currentWordIndex >= gameLength) return;
 
-    if (wordStartIsSame(combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey), promptWords[currentWordIndex])) {
+    if (e.key === ' ' && e.target.value.length < promptWords[currentWordIndex].length) {
+      e.target.style.backgroundColor = 'red';
+    } else if (wordStartIsSame(combineStringAndKey(e.target.value, e.key, e.ctrlKey, e.altKey), promptWords[currentWordIndex])) {
       e.target.style.backgroundColor = 'white';
     } else {
       e.target.style.backgroundColor = 'red';
