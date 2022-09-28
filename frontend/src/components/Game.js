@@ -11,19 +11,19 @@ const Game = () => {
 
   const promptEl = useRef(null);
 
-  const handleSubmit = async (data) => {
-    try {
-      await fetch("http://localhost:5000/api/scores", {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-      });
-    } catch (err) {
-      console.error(err);
-    }
-  }
+  // const handleSubmit = async (data) => {
+  //   try {
+  //     await fetch("http://localhost:5000/api/scores", {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       body: JSON.stringify(data)
+  //     });
+  //   } catch (err) {
+  //     console.error(err);
+  //   }
+  // }
 
   const [promptWords, promptDivs] = useMemo(() => {
     return createRandomPrompt(gameLength)
@@ -33,10 +33,10 @@ const Game = () => {
     if (phase === 1) {
       setStartTime(performance.now());
     } else if (phase === 2) {
-      handleSubmit({
-        wpm: wpm,
-        userId: Math.floor(Math.random() * 5 + 1)
-      });
+      // handleSubmit({
+      //   wpm: wpm,
+      //   userId: Math.floor(Math.random() * 5 + 1)
+      // });
     }
   }, [phase]);
   
