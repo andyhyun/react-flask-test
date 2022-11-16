@@ -13,7 +13,7 @@ const Game = () => {
 
   const handleSubmit = async (data) => {
     try {
-      await fetch("http://localhost:5000/api/scores", {
+      await fetch("http://localhost:8080/api/scores", {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
